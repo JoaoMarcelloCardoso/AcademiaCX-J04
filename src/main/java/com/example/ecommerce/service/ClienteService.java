@@ -1,78 +1,49 @@
 package com.example.ecommerce.service;
 
-import com.example.ecommerce.handler.exceptions.ParametroInvalidoException;
+
 import com.example.ecommerce.handler.exceptions.RecursoNaoEncontradoException;
 import com.example.ecommerce.model.ClienteModel;
+import com.example.ecommerce.model.dto.ClienteDto;
 import com.example.ecommerce.repository.ClienteRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
-import java.util.List;
 
 @Service
 public class ClienteService {
-    @Autowired
-    private ClienteRepository clienteRepository;
 
-    public List<ClienteModel> findAll() {
-        List<ClienteModel> clienteModels = clienteRepository.findAll();
+    private final ClienteRepository clienteRepository;
 
-        return clienteModels;
+    private final ModelMapper modelMapper;
+
+    public ClienteService(ClienteRepository clienteRepository, ModelMapper modelMapper) {
+        this.clienteRepository = clienteRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public ClienteModel findById(ClienteModel clienteModel) {
-
-        if (clienteModel == null) {
-            throw new ParametroInvalidoException("A Cliente Model deve informada");
-        }
-
-        if (clienteModel.getId() == null) {
-            throw new ParametroInvalidoException("A Cliente Model deve conter um id");
-        }
-
-        try {
-            clienteModel = clienteRepository.findById(clienteModel.getId()).get();
-        } catch (Exception e) {
-            throw new RecursoNaoEncontradoException("Id informado não encontrado");
-        }
-
-        return clienteModel;
+    public ClienteDto findById(Long id) {
+        ClienteModel clienteModel = clienteRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com id: " + id));
+        return new ClienteDto(clienteModel);
     }
 
-    public ClienteModel findById(Long id) {
-        if (id == null) {
-            throw new ParametroInvalidoException("Id informado inválido");
-        }
-
-        ClienteModel clienteModel = new ClienteModel();
-        try {
-            clienteModel = clienteRepository.findById(id).get();
-        } catch (Exception e) {
-            throw new RecursoNaoEncontradoException("Id informado não encontrado");
-        }
-
-        return clienteModel;
+    public ClienteDto insert(ClienteDto clienteDto) {
+        clienteDto.setId(null);
+        ClienteModel clienteModel = new ClienteModel(clienteDto);
+        clienteModel = clienteRepository.save(clienteModel);
+        return new ClienteDto(clienteModel);
     }
 
-    public ClienteModel insert(ClienteModel clienteModel) {
-        clienteModel.setId(null);
-
-        ClienteModel result = clienteRepository.save(clienteModel);
-
-        return result;
-    }
-
-    public ClienteModel update(ClienteModel clienteModel) {
-        findById(clienteModel);
-
-        return clienteRepository.save(clienteModel);
+    public ClienteDto update(ClienteDto clienteDto) {
+        ClienteModel clienteModel = clienteRepository.findById(clienteDto.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Cliente não encontrado com id: " + clienteDto.getId()));
+        clienteModel.setCpf(clienteDto.getCpf());
+        clienteModel.setNome(clienteDto.getNome());
+        clienteModel = clienteRepository.save(clienteModel);
+        return new ClienteDto(clienteModel);
     }
 
     public boolean delete(Long id) {
         findById(id);
-
         clienteRepository.deleteById(id);
-
         return true;
     }
 }

@@ -2,58 +2,48 @@ package com.example.ecommerce.service;
 
 import com.example.ecommerce.handler.exceptions.RecursoNaoEncontradoException;
 import com.example.ecommerce.model.EnderecoModel;
+import com.example.ecommerce.model.dto.EnderecoDto;
 import com.example.ecommerce.repository.EnderecoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.example.ecommerce.handler.exceptions.ParametroInvalidoException;
-import java.util.List;
+
 
 @Service
 public class EnderecoService {
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    private final EnderecoRepository enderecoRepository;
 
-    public List<EnderecoModel> findAll() {
-        List<EnderecoModel> enderecoModels = enderecoRepository.findAll();
-        return enderecoModels;
+    private final ModelMapper modelMapper;
+
+    public EnderecoService(EnderecoRepository enderecoRepository, ModelMapper modelMapper) {
+        this.enderecoRepository = enderecoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public EnderecoModel findById(Long id) {
-        if (id == null) {
-            throw new ParametroInvalidoException("Id informado inválido");
-        }
-
-        EnderecoModel enderecoModel;
-        try {
-            enderecoModel = enderecoRepository.findById(id).get();
-        } catch (Exception e) {
-            throw new RecursoNaoEncontradoException("Id informado não encontrado");
-        }
-
-        return enderecoModel;
+    public EnderecoDto findById(Long id) {
+        EnderecoModel enderecoModel = enderecoRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Endereco não encontrado com id: " + id));
+        return new EnderecoDto(enderecoModel);
     }
 
-    public EnderecoModel insert(EnderecoModel enderecoModel) {
-        enderecoModel.setId(null);
-
-        EnderecoModel result = enderecoRepository.save(enderecoModel);
-
-        return result;
+    public EnderecoDto insert(EnderecoDto enderecoDto) {
+        enderecoDto.setId(null);
+        EnderecoModel enderecoModel = new EnderecoModel(enderecoDto);
+        enderecoModel = enderecoRepository.save(enderecoModel);
+        return new EnderecoDto(enderecoModel);
     }
 
-    public EnderecoModel update(EnderecoModel enderecoModel) {
-        findById(enderecoModel.getId());
-
-        return enderecoRepository.save(enderecoModel);
+    public EnderecoDto update(EnderecoDto enderecoDto) {
+        EnderecoModel enderecoModel = enderecoRepository.findById(enderecoDto.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Endereco não encontrado com id: " + enderecoDto.getId()));
+        enderecoModel.setLogradouro(enderecoDto.getRua());
+        enderecoModel.setCidade(enderecoDto.getCidade());
+        enderecoModel = enderecoRepository.save(enderecoModel);
+        return new EnderecoDto(enderecoModel);
     }
 
     public boolean delete(Long id) {
         findById(id);
-
         enderecoRepository.deleteById(id);
-
         return true;
     }
-
 }

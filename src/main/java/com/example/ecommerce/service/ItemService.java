@@ -1,34 +1,47 @@
 package com.example.ecommerce.service;
 
+import com.example.ecommerce.handler.exceptions.RecursoNaoEncontradoException;
 import com.example.ecommerce.model.ItemModel;
+import com.example.ecommerce.model.dto.ItemDto;
 import com.example.ecommerce.repository.ItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import java.util.List;
+
 
 @Service
 public class ItemService {
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
-    public List<ItemModel> findAll() {
-        return itemRepository.findAll();
+    private final ModelMapper modelMapper;
+
+    public ItemService(ItemRepository itemRepository, ModelMapper modelMapper) {
+        this.itemRepository = itemRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public ItemModel findById(Long id) {
-        return itemRepository.findById(id).orElse(null);
+    public ItemDto findById(Long id) {
+        ItemModel itemModel = itemRepository.findById(id)
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Item não encontrado com id: " + id));
+        return new ItemDto(itemModel);
     }
 
-    public ItemModel insert(ItemModel itemModel) {
-        return itemRepository.save(itemModel);
+    public ItemDto insert(ItemDto itemDto) {
+        itemDto.setId(null);
+        ItemModel itemModel = new ItemModel(itemDto);
+        itemModel = itemRepository.save(itemModel);
+        return new ItemDto(itemModel);
     }
 
-    public ItemModel update(ItemModel itemModel) {
-        return itemRepository.save(itemModel);
+    public ItemDto update(ItemDto itemDto) {
+        ItemModel itemModel = itemRepository.findById(itemDto.getId())
+                .orElseThrow(() -> new RecursoNaoEncontradoException("Item não encontrado com id: " + itemDto.getId()));
+        itemModel.setQuantidade(itemDto.getQuantidade());
+        itemModel = itemRepository.save(itemModel);
+        return new ItemDto(itemModel);
     }
 
     public boolean delete(Long id) {
+        findById(id);
         itemRepository.deleteById(id);
         return true;
     }
