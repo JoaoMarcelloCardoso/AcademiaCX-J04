@@ -1,30 +1,24 @@
-package com.academiacx.model;
+package com.academiacx.model.dto;
 
-import com.academiacx.model.dto.ProdutoDto;
-import jakarta.persistence.*;
+import com.academiacx.model.ProdutoModel;
 
+public class ProdutoDto {
 
-@Entity
-@Table(name = "tb_produto")
-public class ProdutoModel {
-
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(unique = true)
     private String sku;
     private String nome;
 
 
-    public ProdutoModel() {
+    public ProdutoDto() {
 
     }
 
-    public ProdutoModel(ProdutoDto produtoDto) {
-        this.id = produtoDto.getId();
-        this.nome = produtoDto.getNome();
-        this.sku = produtoDto.getSku();
+    public ProdutoDto(ProdutoModel produtoModel) {
+        this.id = produtoModel.getId();
+        this.nome = produtoModel.getNome();
+        this.sku = produtoModel.getSku();
     }
+
 
     public Long getId() {
         return id;

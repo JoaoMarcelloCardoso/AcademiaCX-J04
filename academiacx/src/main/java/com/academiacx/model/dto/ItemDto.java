@@ -1,45 +1,34 @@
-package com.academiacx.model;
+package com.academiacx.model.dto;
 
-import com.academiacx.model.dto.ItemDto;
-import jakarta.persistence.*;
+import com.academiacx.model.CarrinhoModel;
+import com.academiacx.model.ItemModel;
+import com.academiacx.model.PrecoModel;
+import com.academiacx.model.ProdutoModel;
 
 import java.math.BigDecimal;
 
 
-@Entity
-@Table(name = "tb_item")
-public class ItemModel {
+public class ItemDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private int quantidade;
     private BigDecimal total;
-
-    @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
     private ProdutoModel produtoModel;
-
-    @ManyToOne
-    @JoinColumn(name = "preco_id", nullable = false)
     private PrecoModel precoModel;
-
-    @ManyToOne
-    @JoinColumn(name = "carrinho_id", nullable = false)
     private CarrinhoModel carrinhoModel;
 
 
-    public ItemModel() {
+    public ItemDto() {
 
     }
 
-    public ItemModel(ItemDto itemDto) {
-        this.id = itemDto.getId();
-        this.quantidade = itemDto.getQuantidade();
-        this.total = itemDto.getTotal();
-        this.produtoModel = itemDto.getProdutoModel();
-        this.precoModel = itemDto.getPrecoModel();
-        this.carrinhoModel = itemDto.getCarrinhoModel();
+    public ItemDto(ItemModel itemModel) {
+        this.id = itemModel.getId();
+        this.quantidade = itemModel.getQuantidade();
+        this.total = itemModel.getTotal();
+        this.produtoModel = itemModel.getProdutoModel();
+        this.precoModel = itemModel.getPrecoModel();
+        this.carrinhoModel = itemModel.getCarrinhoModel();
     }
 
 

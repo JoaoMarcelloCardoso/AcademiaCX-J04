@@ -1,9 +1,7 @@
 package com.academiacx.controller;
 
-import com.academiacx.model.ClienteModel;
 import com.academiacx.model.dto.ClienteDto;
 import com.academiacx.service.ClienteService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -57,6 +55,5 @@ public class ClienteController {
 
         return clienteService.delete(id);
     }
-
 
 }

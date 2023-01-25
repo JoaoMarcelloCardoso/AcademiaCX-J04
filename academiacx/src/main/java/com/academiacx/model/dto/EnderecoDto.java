@@ -1,44 +1,35 @@
-package com.academiacx.model;
+package com.academiacx.model.dto;
 
-import com.academiacx.model.dto.EnderecoDto;
-import jakarta.persistence.*;
+import com.academiacx.model.ClienteModel;
+import com.academiacx.model.EnderecoModel;
 
 
-@Entity
-@Table(name = "tb_endereco")
-public class EnderecoModel {
+public class EnderecoDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @Column(nullable = false)
     private String cep;
     private String logradouro;
     private String numero;
     private String bairro;
-    @Column(nullable = false)
     private String cidade;
-    @Column(nullable = false)
     private String uf;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteModel clienteModel;
 
 
-    public EnderecoModel() {
+    public EnderecoDto() {
 
     }
 
-    public EnderecoModel(EnderecoDto enderecoDto) {
-        this.id = enderecoDto.getId();
-        this.cep = enderecoDto.getCep();
-        this.cidade = enderecoDto.getCidade();
-        this.uf = enderecoDto.getUf();
-        this.bairro = enderecoDto.getBairro();
-        this.logradouro = enderecoDto.getLogradouro();
-        this.numero = enderecoDto.getNumero();
-        this.clienteModel = enderecoDto.getClienteModel();
+    public EnderecoDto(EnderecoModel enderecoModel) {
+        this.id = enderecoModel.getId();
+        this.cep = enderecoModel.getCep();
+        this.cidade = enderecoModel.getCidade();
+        this.uf = enderecoModel.getUf();
+        this.bairro = enderecoModel.getBairro();
+        this.logradouro = enderecoModel.getLogradouro();
+        this.numero = enderecoModel.getNumero();
+        this.clienteModel = enderecoModel.getClienteModel();
     }
 
     public Long getId() {

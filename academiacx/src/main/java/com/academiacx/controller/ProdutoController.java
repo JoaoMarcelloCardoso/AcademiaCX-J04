@@ -1,8 +1,7 @@
 package com.academiacx.controller;
 
-import com.academiacx.model.ProdutoModel;
+import com.academiacx.model.dto.ProdutoDto;
 import com.academiacx.service.ProdutoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +10,17 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/produto")
 public class ProdutoController {
-    @Autowired
-    private ProdutoService produtoService;
+
+    private final ProdutoService produtoService;
+
+    public ProdutoController(ProdutoService produtoService) {
+        this.produtoService = produtoService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<ProdutoModel> response = produtoService.findAll();
+        List<ProdutoDto> response = produtoService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -25,23 +28,23 @@ public class ProdutoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
 
-        ProdutoModel response = produtoService.findById(id);
+        ProdutoDto response = produtoService.findById(id);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> insert(@RequestBody ProdutoModel produtoModel) {
+    public ResponseEntity<?> insert(@RequestBody ProdutoDto produtoDto) {
 
-        ProdutoModel response = produtoService.insert(produtoModel);
+        ProdutoDto response = produtoService.insert(produtoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody ProdutoModel produtoModel) {
+    public ResponseEntity<?> update(@RequestBody ProdutoDto produtoDto) {
 
-        ProdutoModel response = produtoService.update(produtoModel);
+        ProdutoDto response = produtoService.update(produtoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }

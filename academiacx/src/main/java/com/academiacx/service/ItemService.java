@@ -4,25 +4,36 @@ import com.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.academiacx.handler.exceptions.ParametroNullException;
 import com.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.academiacx.model.ItemModel;
+import com.academiacx.model.dto.ItemDto;
 import com.academiacx.repository.ItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
+
 
 import java.util.List;
 
 @Service
 public class ItemService {
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
-    public List<ItemModel> findAll() {
-        List<ItemModel> itemModels = itemRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return itemModels;
+    public ItemService(ItemRepository itemRepository, ModelMapper modelMapper) {
+        this.itemRepository = itemRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public ItemModel findById(ItemModel itemModel) {
+    public List<ItemDto> findAll() {
+
+        List<ItemModel> itemModels = itemRepository.findAll();
+
+        return modelMapper.map(itemModels, new TypeToken<List<ItemDto>>() {
+        }.getType());
+    }
+
+    public ItemDto findById(ItemModel itemModel) {
 
         if (itemModel == null) {
             throw new ParametroInvalidoException("O Item Model deve ser informado!");
@@ -39,10 +50,14 @@ public class ItemService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return itemModel;
+        return modelMapper.map(itemModel, ItemDto.class);
     }
 
-    public ItemModel findById(Long id) {
+    public ItemDto findById(Long id) {
+
+        if (id == null) {
+            throw new ParametroInvalidoException("Id informado inválido");
+        }
 
         ItemModel itemModel = new ItemModel();
         try {
@@ -52,34 +67,31 @@ public class ItemService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return itemModel;
+        return modelMapper.map(itemModel, ItemDto.class);
     }
 
-    public ItemModel insert(ItemModel itemModel) {
-        itemModel.setId(null);
+    public ItemDto insert(ItemDto itemDto) {
 
-        ItemModel result = null;
+        itemDto.setId(null);
+
         try {
-            result = itemRepository.save(itemModel);
+            return new ItemDto(itemRepository.save(new ItemModel(itemDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
-    public ItemModel update(ItemModel itemModel) {
+    public ItemDto update(ItemDto itemDto) {
 
-        findById(itemModel);
+        findById(new ItemModel(itemDto));
 
-        ItemModel result = null;
         try {
-            result = itemRepository.save(itemModel);
+            return new ItemDto(itemRepository.save(new ItemModel(itemDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
     public boolean delete(Long id) {

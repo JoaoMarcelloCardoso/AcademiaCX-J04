@@ -5,8 +5,10 @@ import com.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.academiacx.handler.exceptions.ParametroNullException;
 import com.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.academiacx.model.CarrinhoModel;
+import com.academiacx.model.dto.CarrinhoDto;
 import com.academiacx.repository.CarrinhoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,16 +16,24 @@ import java.util.List;
 @Service
 public class CarrinhoService {
 
-    @Autowired
-    private CarrinhoRepository carrinhoRepository;
+    private final CarrinhoRepository carrinhoRepository;
 
-    public List<CarrinhoModel> findAll() {
-        List<CarrinhoModel> carrinhoModels = carrinhoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return carrinhoModels;
+    public CarrinhoService(CarrinhoRepository carrinhoRepository, ModelMapper modelMapper) {
+        this.carrinhoRepository = carrinhoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public CarrinhoModel findById(CarrinhoModel carrinhoModel) {
+    public List<CarrinhoDto> findAll() {
+
+        List<CarrinhoModel> carrinhoModels = carrinhoRepository.findAll();
+
+        return modelMapper.map(carrinhoModels, new TypeToken<List<CarrinhoDto>>() {
+        }.getType());
+    }
+
+    public CarrinhoDto findById(CarrinhoModel carrinhoModel) {
 
         if (carrinhoModel == null) {
             throw new ParametroInvalidoException("O Carrinho Model deve ser informado!");
@@ -40,10 +50,14 @@ public class CarrinhoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return carrinhoModel;
+        return modelMapper.map(carrinhoModel, CarrinhoDto.class);
     }
 
-    public CarrinhoModel findById(Long id) {
+    public CarrinhoDto findById(Long id) {
+
+        if (id == null) {
+            throw new ParametroInvalidoException("Id informado inválido");
+        }
 
         CarrinhoModel carrinhoModel = new CarrinhoModel();
         try {
@@ -53,34 +67,29 @@ public class CarrinhoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return carrinhoModel;
+        return modelMapper.map(carrinhoModel, CarrinhoDto.class);
     }
 
-    public CarrinhoModel insert(CarrinhoModel carrinhoModel) {
-        carrinhoModel.setId(null);
+    public CarrinhoDto insert(CarrinhoDto carrinhoDto) {
 
-        CarrinhoModel result = null;
+        carrinhoDto.setId(null);
+
         try {
-            result = carrinhoRepository.save(carrinhoModel);
+            return new CarrinhoDto(carrinhoRepository.save(new CarrinhoModel(carrinhoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
-
-        return result;
     }
 
-    public CarrinhoModel update(CarrinhoModel carrinhoModel) {
+    public CarrinhoDto update(CarrinhoDto carrinhoDto) {
 
-        findById(carrinhoModel);
+        findById(new CarrinhoModel(carrinhoDto));
 
-        CarrinhoModel result = null;
         try {
-            result = carrinhoRepository.save(carrinhoModel);
+            return new CarrinhoDto(carrinhoRepository.save(new CarrinhoModel(carrinhoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
-
-        return result;
     }
 
     public boolean delete(Long id) {

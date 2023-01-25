@@ -1,7 +1,6 @@
 package com.academiacx.model.dto;
 
 import com.academiacx.model.ClienteModel;
-import jakarta.persistence.*;
 
 public class ClienteDto {
 

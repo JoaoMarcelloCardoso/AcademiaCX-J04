@@ -1,8 +1,7 @@
 package com.academiacx.controller;
 
-import com.academiacx.model.EnderecoModel;
+import com.academiacx.model.dto.EnderecoDto;
 import com.academiacx.service.EnderecoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +10,17 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/endereco")
 public class EnderecoController {
-    @Autowired
-    private EnderecoService enderecoService;
+
+    private final EnderecoService enderecoService;
+
+    public EnderecoController(EnderecoService enderecoService) {
+        this.enderecoService = enderecoService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<EnderecoModel> response = enderecoService.findAll();
+        List<EnderecoDto> response = enderecoService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -25,23 +28,23 @@ public class EnderecoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
 
-        EnderecoModel response = enderecoService.findById(id);
+        EnderecoDto response = enderecoService.findById(id);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> insert(@RequestBody EnderecoModel enderecoModel) {
+    public ResponseEntity<?> insert(@RequestBody EnderecoDto enderecoDto) {
 
-        EnderecoModel response = enderecoService.insert(enderecoModel);
+        EnderecoDto response = enderecoService.insert(enderecoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody EnderecoModel enderecoModel) {
+    public ResponseEntity<?> update(@RequestBody EnderecoDto enderecoDto) {
 
-        EnderecoModel response = enderecoService.update(enderecoModel);
+        EnderecoDto response = enderecoService.update(enderecoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -51,7 +54,5 @@ public class EnderecoController {
 
         return enderecoService.delete(id);
     }
-
-
 
 }

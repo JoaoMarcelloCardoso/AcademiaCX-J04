@@ -1,8 +1,7 @@
 package com.academiacx.controller;
 
-import com.academiacx.model.CarrinhoModel;
+import com.academiacx.model.dto.CarrinhoDto;
 import com.academiacx.service.CarrinhoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +10,17 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/carrinho")
 public class CarrinhoController {
-    @Autowired
-    private CarrinhoService carrinhoService;
+
+    private final CarrinhoService carrinhoService;
+
+    public CarrinhoController(CarrinhoService carrinhoService) {
+        this.carrinhoService = carrinhoService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<CarrinhoModel> response = carrinhoService.findAll();
+        List<CarrinhoDto> response = carrinhoService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -25,24 +28,24 @@ public class CarrinhoController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
 
-        CarrinhoModel response = carrinhoService.findById(id);
+        CarrinhoDto response = carrinhoService.findById(id);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> insert(@RequestBody CarrinhoModel carrinhoModel) {
+    public ResponseEntity<?> insert(@RequestBody CarrinhoDto carrinhoDto) {
 
-        CarrinhoModel response = carrinhoService.insert(carrinhoModel);
+        CarrinhoDto response = carrinhoService.insert(carrinhoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody CarrinhoModel carrinhoModel) {
+    public ResponseEntity<?> update(@RequestBody CarrinhoDto carrinhoDto) {
 
-        CarrinhoModel response = carrinhoService.update(carrinhoModel);
+        CarrinhoDto response = carrinhoService.update(carrinhoDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }

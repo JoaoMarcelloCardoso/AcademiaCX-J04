@@ -1,8 +1,7 @@
 package com.academiacx.controller;
 
-import com.academiacx.model.ItemModel;
+import com.academiacx.model.dto.ItemDto;
 import com.academiacx.service.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,13 +10,17 @@ import java.util.List;
 @RestController
 @RequestMapping(value = "/item")
 public class ItemController {
-    @Autowired
-    private ItemService itemService;
+
+    private final ItemService itemService;
+
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<ItemModel> response = itemService.findAll();
+        List<ItemDto> response = itemService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -25,23 +28,23 @@ public class ItemController {
     @GetMapping("/{id}")
     public ResponseEntity<?> findById(@PathVariable Long id) {
 
-        ItemModel response = itemService.findById(id);
+        ItemDto response = itemService.findById(id);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PostMapping("/save")
-    public ResponseEntity<?> insert(@RequestBody ItemModel itemModel) {
+    public ResponseEntity<?> insert(@RequestBody ItemDto itemDto) {
 
-        ItemModel response = itemService.insert(itemModel);
+        ItemDto response = itemService.insert(itemDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @PutMapping("/update")
-    public ResponseEntity<?> update(@RequestBody ItemModel itemModel) {
+    public ResponseEntity<?> update(@RequestBody ItemDto itemDto) {
 
-        ItemModel response = itemService.update(itemModel);
+        ItemDto response = itemService.update(itemDto);
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
@@ -51,6 +54,5 @@ public class ItemController {
 
         return itemService.delete(id);
     }
-
 
 }

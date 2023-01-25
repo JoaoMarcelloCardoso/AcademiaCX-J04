@@ -1,38 +1,31 @@
-package com.academiacx.model;
+package com.academiacx.model.dto;
 
-import com.academiacx.model.dto.PrecoDto;
-import jakarta.persistence.*;
+import com.academiacx.model.ClienteModel;
+import com.academiacx.model.PrecoModel;
+import com.academiacx.model.ProdutoModel;
 
 import java.math.BigDecimal;
 
 
-@Entity
-@Table(name = "tb_preco")
-public class PrecoModel {
+public class PrecoDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private BigDecimal valor;
 
-    @ManyToOne
-    @JoinColumn(name = "produto_id", nullable = false)
     private ProdutoModel produtoModel;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteModel clienteModel;
 
 
-    public PrecoModel() {
+    public PrecoDto() {
 
     }
 
-    public PrecoModel(PrecoDto precoDto) {
-        this.id = precoDto.getId();
-        this.valor = precoDto.getValor();
-        this.produtoModel = precoDto.getProdutoModel();
-        this.clienteModel = precoDto.getClienteModel();
+    public PrecoDto(PrecoModel precoModel) {
+        this.id = precoModel.getId();
+        this.valor = precoModel.getValor();
+        this.produtoModel = precoModel.getProdutoModel();
+        this.clienteModel = precoModel.getClienteModel();
     }
 
 

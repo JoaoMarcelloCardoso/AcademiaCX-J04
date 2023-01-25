@@ -26,6 +26,7 @@ public class ClienteService {
     }
 
     public List<ClienteDto> findAll() {
+
         List<ClienteModel> clienteModels = clienteRepository.findAll();
 
         return modelMapper.map(clienteModels, new TypeToken<List<ClienteDto>>() {
@@ -70,12 +71,13 @@ public class ClienteService {
     }
 
     public ClienteDto insert(ClienteDto clienteDto) {
+
         clienteDto.setId(null);
 
         try {
             return new ClienteDto(clienteRepository.save(new ClienteModel(clienteDto)));
         } catch (Exception e) {
-            throw new ParametroNullException("Algum dado inserido viola uma restrição do banco de dados (dado nulo ou já existente)");
+            throw new ConstraintViolationException("Algum dado inserido viola uma restrição do banco de dados (dado nulo ou já existente)");
         }
     }
 

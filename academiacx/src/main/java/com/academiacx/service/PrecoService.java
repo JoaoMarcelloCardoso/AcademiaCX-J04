@@ -5,8 +5,10 @@ import com.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.academiacx.handler.exceptions.ParametroNullException;
 import com.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.academiacx.model.PrecoModel;
+import com.academiacx.model.dto.PrecoDto;
 import com.academiacx.repository.PrecoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -14,16 +16,24 @@ import java.util.List;
 @Service
 public class PrecoService {
 
-    @Autowired
-    private PrecoRepository precoRepository;
+    private final PrecoRepository precoRepository;
 
-    public List<PrecoModel> findAll() {
-        List<PrecoModel> precoModels = precoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return precoModels;
+    public PrecoService(PrecoRepository precoRepository, ModelMapper modelMapper) {
+        this.precoRepository = precoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public PrecoModel findById(PrecoModel precoModel) {
+    public List<PrecoDto> findAll() {
+
+        List<PrecoModel> precoModels = precoRepository.findAll();
+
+        return modelMapper.map(precoModels, new TypeToken<List<PrecoDto>>() {
+        }.getType());
+    }
+
+    public PrecoDto findById(PrecoModel precoModel) {
 
         if (precoModel == null) {
             throw new ParametroInvalidoException("O Preço Model deve ser informado!");
@@ -40,10 +50,14 @@ public class PrecoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return precoModel;
+        return modelMapper.map(precoModel, PrecoDto.class);
     }
 
-    public PrecoModel findById(Long id) {
+    public PrecoDto findById(Long id) {
+
+        if (id == null) {
+            throw new ParametroInvalidoException("Id informado inválido");
+        }
 
         PrecoModel precoModel = new PrecoModel();
         try {
@@ -53,34 +67,31 @@ public class PrecoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return precoModel;
+        return modelMapper.map(precoModel, PrecoDto.class);
     }
 
-    public PrecoModel insert(PrecoModel precoModel) {
-        precoModel.setId(null);
+    public PrecoDto insert(PrecoDto precoDto) {
 
-        PrecoModel result = null;
+        precoDto.setId(null);
+
         try {
-            result = precoRepository.save(precoModel);
+            return new PrecoDto(precoRepository.save(new PrecoModel(precoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
-    public PrecoModel update(PrecoModel precoModel) {
+    public PrecoDto update(PrecoDto precoDto) {
 
-        findById(precoModel);
+        findById(new PrecoModel(precoDto));
 
-        PrecoModel result = null;
         try {
-            result = precoRepository.save(precoModel);
+            return new PrecoDto(precoRepository.save(new PrecoModel(precoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
     public boolean delete(Long id) {

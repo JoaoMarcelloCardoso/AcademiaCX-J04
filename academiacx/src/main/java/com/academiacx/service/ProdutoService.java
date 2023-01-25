@@ -4,8 +4,10 @@ import com.academiacx.handler.exceptions.ConstraintViolationException;
 import com.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.academiacx.model.ProdutoModel;
+import com.academiacx.model.dto.ProdutoDto;
 import com.academiacx.repository.ProdutoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,16 +15,24 @@ import java.util.List;
 @Service
 public class ProdutoService {
 
-    @Autowired
-    private ProdutoRepository produtoRepository;
+    private final ProdutoRepository produtoRepository;
 
-    public List<ProdutoModel> findAll() {
-        List<ProdutoModel> produtoModels = produtoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return produtoModels;
+    public ProdutoService(ProdutoRepository produtoRepository, ModelMapper modelMapper) {
+        this.produtoRepository = produtoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public ProdutoModel findById(ProdutoModel produtoModel) {
+    public List<ProdutoDto> findAll() {
+
+        List<ProdutoModel> produtoModels = produtoRepository.findAll();
+
+        return modelMapper.map(produtoModels, new TypeToken<List<ProdutoDto>>() {
+        }.getType());
+    }
+
+    public ProdutoDto findById(ProdutoModel produtoModel) {
 
         if (produtoModel == null) {
             throw new ParametroInvalidoException("O Produto Model deve ser informado!");
@@ -39,10 +49,14 @@ public class ProdutoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return produtoModel;
+        return modelMapper.map(produtoModel, ProdutoDto.class);
     }
 
-    public ProdutoModel findById(Long id) {
+    public ProdutoDto findById(Long id) {
+
+        if (id == null) {
+            throw new ParametroInvalidoException("Id informado inválido");
+        }
 
         ProdutoModel produtoModel = new ProdutoModel();
         try {
@@ -52,34 +66,31 @@ public class ProdutoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return produtoModel;
+        return modelMapper.map(produtoModel, ProdutoDto.class);
     }
 
-    public ProdutoModel insert(ProdutoModel produtoModel) {
-        produtoModel.setId(null);
+    public ProdutoDto insert(ProdutoDto produtoDto) {
 
-        ProdutoModel result = null;
+        produtoDto.setId(null);
+
         try {
-            result = produtoRepository.save(produtoModel);
+            return new ProdutoDto(produtoRepository.save(new ProdutoModel(produtoDto)));
         } catch (Exception e) {
             throw new ConstraintViolationException("Algum dado inserido viola uma restrição do banco de dados (Dado duplicado)");
         }
 
-        return result;
     }
 
-    public ProdutoModel update(ProdutoModel produtoModel) {
+    public ProdutoDto update(ProdutoDto produtoDto) {
 
-        findById(produtoModel);
+        findById(new ProdutoModel(produtoDto));
 
-        ProdutoModel result = null;
         try {
-            result = produtoRepository.save(produtoModel);
+            return new ProdutoDto(produtoRepository.save(new ProdutoModel(produtoDto)));
         } catch (Exception e) {
             throw new ConstraintViolationException("Algum dado inserido viola uma restrição do banco de dados (Dado duplicado)");
         }
 
-        return result;
     }
 
     public boolean delete(Long id) {

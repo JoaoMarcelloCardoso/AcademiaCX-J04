@@ -1,38 +1,31 @@
-package com.academiacx.model;
+package com.academiacx.model.dto;
 
-import com.academiacx.model.dto.CarrinhoDto;
-import jakarta.persistence.*;
+import com.academiacx.model.CarrinhoModel;
+import com.academiacx.model.ClienteModel;
 
 import java.math.BigDecimal;
 import java.util.Date;
 
 
-@Entity
-@Table(name = "tb_carrinho")
-public class CarrinhoModel {
+public class CarrinhoDto {
 
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     private Date data;
     private BigDecimal total;
 
-    @ManyToOne
-    @JoinColumn(name = "cliente_id", nullable = false)
     private ClienteModel clienteModel;
 
 
-    public CarrinhoModel() {
+    public CarrinhoDto() {
 
     }
 
-    public CarrinhoModel(CarrinhoDto carrinhoDto) {
-        this.id = carrinhoDto.getId();
-        this.total = carrinhoDto.getTotal();
-        this.data = carrinhoDto.getData();
-        this.clienteModel = carrinhoDto.getClienteModel();
+    public CarrinhoDto(CarrinhoModel carrinhoModel) {
+        this.id = carrinhoModel.getId();
+        this.total = carrinhoModel.getTotal();
+        this.data = carrinhoModel.getData();
+        this.clienteModel = carrinhoModel.getClienteModel();
     }
-
 
     public Long getId() {
         return id;

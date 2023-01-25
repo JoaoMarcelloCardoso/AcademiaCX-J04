@@ -4,8 +4,10 @@ import com.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.academiacx.handler.exceptions.ParametroNullException;
 import com.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.academiacx.model.EnderecoModel;
+import com.academiacx.model.dto.EnderecoDto;
 import com.academiacx.repository.EnderecoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -13,16 +15,24 @@ import java.util.List;
 @Service
 public class EnderecoService {
 
-    @Autowired
-    private EnderecoRepository enderecoRepository;
+    private final EnderecoRepository enderecoRepository;
 
-    public List<EnderecoModel> findAll() {
-        List<EnderecoModel> enderecoModels = enderecoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return enderecoModels;
+    public EnderecoService(EnderecoRepository enderecoRepository, ModelMapper modelMapper) {
+        this.enderecoRepository = enderecoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public EnderecoModel findById(EnderecoModel enderecoModel) {
+    public List<EnderecoDto> findAll() {
+
+        List<EnderecoModel> enderecoModels = enderecoRepository.findAll();
+
+        return modelMapper.map(enderecoModels, new TypeToken<List<EnderecoDto>>() {
+        }.getType());
+    }
+
+    public EnderecoDto findById(EnderecoModel enderecoModel) {
 
         if (enderecoModel == null) {
             throw new ParametroInvalidoException("O Endereço Model deve ser informado!");
@@ -39,10 +49,14 @@ public class EnderecoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return enderecoModel;
+        return modelMapper.map(enderecoModel, EnderecoDto.class);
     }
 
-    public EnderecoModel findById(Long id) {
+    public EnderecoDto findById(Long id) {
+
+        if (id == null) {
+            throw new ParametroInvalidoException("Id informado inválido");
+        }
 
         EnderecoModel enderecoModel = new EnderecoModel();
         try {
@@ -52,34 +66,31 @@ public class EnderecoService {
             throw new RecursoNaoEncontradoException("Id informado não encontrado!");
         }
 
-        return enderecoModel;
+        return modelMapper.map(enderecoModel, EnderecoDto.class);
     }
 
-    public EnderecoModel insert(EnderecoModel enderecoModel) {
-        enderecoModel.setId(null);
+    public EnderecoDto insert(EnderecoDto enderecoDto) {
 
-        EnderecoModel result = null;
+        enderecoDto.setId(null);
+
         try {
-            result = enderecoRepository.save(enderecoModel);
+            return new EnderecoDto(enderecoRepository.save(new EnderecoModel(enderecoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
-    public EnderecoModel update(EnderecoModel enderecoModel) {
+    public EnderecoDto update(EnderecoDto enderecoDto) {
 
-        findById(enderecoModel);
+        findById(new EnderecoModel(enderecoDto));
 
-        EnderecoModel result = null;
         try {
-            result = enderecoRepository.save(enderecoModel);
+            return new EnderecoDto(enderecoRepository.save(new EnderecoModel(enderecoDto)));
         } catch (Exception e) {
             throw new ParametroNullException("Algum dado obrigatório não foi inserido!");
         }
 
-        return result;
     }
 
     public boolean delete(Long id) {
