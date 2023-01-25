@@ -3,7 +3,6 @@ package com.demo.academiacx.controller;
 import com.demo.academiacx.model.UserModel;
 import com.demo.academiacx.model.dto.UserDto;
 import com.demo.academiacx.service.UserService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
