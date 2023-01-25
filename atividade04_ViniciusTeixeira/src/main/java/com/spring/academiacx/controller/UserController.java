@@ -1,7 +1,6 @@
 package com.spring.academiacx.controller;
 
 
-import com.spring.academiacx.model.ProdutoModel;
 import com.spring.academiacx.model.UserModel;
 import com.spring.academiacx.model.dto.UserDto;
 import com.spring.academiacx.service.UserService;
@@ -22,19 +21,18 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<UserModel> response = userService.findAll();
+        List<UserDto> response = userService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public UserModel findById(@PathVariable Long id) {
+    public UserDto findById(@PathVariable Long id) {
 
         return userService.findById(id);
     }
-
-    @PostMapping("/save")
-    public UserModel insert(@RequestBody UserModel userDto) {
+    @PostMapping("/salvar")
+    public UserDto insert(@RequestBody UserDto userDto) {
 
         return userService.insert(userDto);
     }
@@ -52,7 +50,13 @@ public class UserController {
         return userService.delete(id);
     }
 
+    @GetMapping("/buscar-id")
+    public UserDto filter(@RequestParam(value = "id", required = true) Long id) {
+
+        return userService.buscarPorId(id);
+    }
+
+
 
 
 }
-

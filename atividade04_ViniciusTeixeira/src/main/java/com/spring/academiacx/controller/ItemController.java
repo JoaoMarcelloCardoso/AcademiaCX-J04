@@ -1,8 +1,8 @@
 package com.spring.academiacx.controller;
 
 import com.spring.academiacx.model.ItemModel;
+import com.spring.academiacx.model.dto.ItemDto;
 import com.spring.academiacx.service.ItemService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,34 +12,36 @@ import java.util.List;
 @RequestMapping(value = "/item")
 public class ItemController {
 
-    @Autowired
-    private ItemService itemService;
+    private final ItemService itemService;
+
+    public ItemController(ItemService itemService) {
+        this.itemService = itemService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<ItemModel> response = itemService.findAll();
+        List<ItemDto> response = itemService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public ItemModel findById(@PathVariable Long id) {
+    public ItemDto findById(@PathVariable Long id) {
 
         return itemService.findById(id);
     }
-
-    @PostMapping("/save")
-    public ItemModel insert(@RequestBody ItemModel itemDto) {
+    @PostMapping("/salvar")
+    public ItemDto insert(@RequestBody ItemDto itemDto) {
 
         return itemService.insert(itemDto);
     }
 
 
     @PutMapping("/update")
-    public ItemModel update(@RequestBody ItemModel itemDto) {
+    public ItemModel update(@RequestBody ItemModel itemModel) {
 
-        return itemService.update(itemDto);
+        return itemService.update(itemModel);
     }
 
     @DeleteMapping("/delete")
@@ -48,9 +50,16 @@ public class ItemController {
         return itemService.delete(id);
     }
 
+    @GetMapping("/buscar-id")
+    public ItemDto filter(@RequestParam(value = "id", required = true) Long id) {
+
+        return itemService.buscarPorId(id);
+    }
+
+
+
 
 }
-
 
 
 

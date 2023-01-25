@@ -1,6 +1,7 @@
 package com.spring.academiacx.model;
 
 
+import com.spring.academiacx.model.dto.ItemDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -15,17 +16,27 @@ public class ItemModel {
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
-    private ProdutoModel produtoDto;
+    private ProdutoModel produtoModel;
 
     @ManyToOne
     @JoinColumn(name = "preco_id")
-    private PrecoModel precoDto;
+    private PrecoModel precoModel;
 
     @ManyToOne
     @JoinColumn(name = "carrinho_id")
-    private CarrinhoModel carrinhoDto;
+    private CarrinhoModel carrinhoModel;
+
+    public ItemModel(ItemDto itemDto) {
+        this.id= itemDto.getId();
+        this.quantidade= itemDto.getQuantidade();
+        this.total = itemDto.getTotal();
+        this.produtoModel = itemDto.getProdutoModel();
+        this.precoModel = itemDto.getPrecoModel();
+        this.carrinhoModel = itemDto.getCarrinhoModel();
+    }
 
     public ItemModel() {
+
     }
 
     public Long getId() {
@@ -53,26 +64,26 @@ public class ItemModel {
     }
 
     public ProdutoModel getProdutoModel() {
-        return produtoDto;
+        return produtoModel;
     }
 
-    public void setProdutoModel(ProdutoModel produtoDto) {
-        this.produtoDto = produtoDto;
+    public void setProdutoModel(ProdutoModel produtoModel) {
+        this.produtoModel = produtoModel;
     }
 
     public PrecoModel getPrecoModel() {
-        return precoDto;
+        return precoModel;
     }
 
-    public void setPrecoModel(PrecoModel precoDto) {
-        this.precoDto = precoDto;
+    public void setPrecoModel(PrecoModel precoModel) {
+        this.precoModel = precoModel;
     }
 
     public CarrinhoModel getCarrinhoModel() {
-        return carrinhoDto;
+        return carrinhoModel;
     }
 
-    public void setCarrinhoModel(CarrinhoModel carrinhoDto) {
-        this.carrinhoDto = carrinhoDto;
+    public void setCarrinhoModel(CarrinhoModel carrinhoModel) {
+        this.carrinhoModel = carrinhoModel;
     }
 }

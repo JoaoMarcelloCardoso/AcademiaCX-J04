@@ -1,5 +1,6 @@
 package com.spring.academiacx.model.dto;
 
+import com.spring.academiacx.model.CarrinhoModel;
 import com.spring.academiacx.model.UserModel;
 
 import java.time.LocalDateTime;
@@ -7,12 +8,19 @@ import java.time.LocalDateTime;
 public class CarrinhoDto {
 
     private Long id;
-    private LocalDateTime dataHora;
+    private LocalDateTime datahora;
     private float total;
-
     private UserModel userModel;
 
     public CarrinhoDto() {
+    }
+
+    public CarrinhoDto(CarrinhoModel carrinhoModel) {
+        this.id= carrinhoModel.getId();
+        this.datahora = carrinhoModel.getDatahora();
+        this.total = carrinhoModel.getTotal();
+        this.userModel = carrinhoModel.getUserModel();
+
     }
 
     public Long getId() {
@@ -23,12 +31,12 @@ public class CarrinhoDto {
         this.id = id;
     }
 
-    public LocalDateTime getDataHora() {
-        return dataHora;
+    public LocalDateTime getDatahora() {
+        return datahora;
     }
 
-    public void setDataHora(LocalDateTime dataHora) {
-        this.dataHora = dataHora;
+    public void setDatahora(LocalDateTime datahora) {
+        this.datahora = datahora;
     }
 
     public float getTotal() {
@@ -39,11 +47,11 @@ public class CarrinhoDto {
         this.total = total;
     }
 
-    public UserModel getClienteModel() {
+    public UserModel getUserModel() {
         return userModel;
     }
 
-    public void setClienteModel(UserModel userModel) {
+    public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
     }
 }

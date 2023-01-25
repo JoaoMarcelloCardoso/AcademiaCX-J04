@@ -1,5 +1,6 @@
 package com.spring.academiacx.model.dto;
 
+import com.spring.academiacx.model.EnderecoModel;
 import com.spring.academiacx.model.UserModel;
 
 public class EnderecoDto {
@@ -14,6 +15,16 @@ public class EnderecoDto {
     private UserModel userModel;
 
     public EnderecoDto() {
+    }
+
+    public EnderecoDto(EnderecoModel enderecoModel) {
+        this.id= enderecoModel.getId();
+        this.cep = enderecoModel.getCep();
+        this.numero = enderecoModel.getNumero();
+        this.bairro = enderecoModel.getBairro();
+        this.cidade = enderecoModel.getCidade();
+        this.uf = enderecoModel.getUf();
+        this.userModel = enderecoModel.getUserModel();
     }
 
     public Long getId() {
@@ -64,11 +75,11 @@ public class EnderecoDto {
         this.uf = uf;
     }
 
-    public UserModel getClienteModel() {
+    public UserModel getUserModel() {
         return userModel;
     }
 
-    public void setClienteModel(UserModel userModel) {
+    public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
     }
 }

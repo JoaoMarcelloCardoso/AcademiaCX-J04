@@ -22,12 +22,14 @@ public class UserModel implements UserDetails {
     @Column(nullable = true)
     private String password;
 
+
     public UserModel() {
     }
 
     public UserModel(UserDto userDto) {
         this.id= userDto.getId();
         this.nome= userDto.getNome();
+        this.cpf= userDto.getCpf();
 
     }
 
@@ -95,4 +97,6 @@ public class UserModel implements UserDetails {
     public void setPassword(String password) {
         this.password = password;
     }
+
+
 }

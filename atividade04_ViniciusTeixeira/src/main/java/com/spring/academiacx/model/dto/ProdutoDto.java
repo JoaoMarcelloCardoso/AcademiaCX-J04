@@ -1,12 +1,21 @@
 package com.spring.academiacx.model.dto;
 
+import com.spring.academiacx.model.ProdutoModel;
+
 public class ProdutoDto {
 
     private Long id;
     private String sku;
+
     private String nome;
 
     public ProdutoDto() {
+    }
+
+    public ProdutoDto(ProdutoModel produtoModel) {
+        this.id= produtoModel.getId();
+        this.sku = produtoModel.getSku();
+        this.nome=produtoModel.getNome();
     }
 
     public Long getId() {

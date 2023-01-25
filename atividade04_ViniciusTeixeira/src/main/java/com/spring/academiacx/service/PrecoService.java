@@ -3,78 +3,88 @@ package com.spring.academiacx.service;
 import com.spring.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.spring.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.spring.academiacx.model.PrecoModel;
+import com.spring.academiacx.model.dto.PrecoDto;
 import com.spring.academiacx.repository.PrecoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class PrecoService {
 
-    @Autowired
-    private PrecoRepository precoRepository;
+    private final PrecoRepository precoRepository;
 
-    public List<PrecoModel> findAll() {
-        List<PrecoModel> precoDtos = precoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return precoDtos;
+    public PrecoService(PrecoRepository precoRepository, ModelMapper modelMapper) {
+        this.precoRepository = precoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public PrecoModel findById(PrecoModel precoDto) {
+    public List<PrecoDto> findAll() {
+        List<PrecoModel> precoModels = precoRepository.findAll();
 
-        if (precoDto == null) {
-            throw new ParametroInvalidoException("O Model Preco deve ser informado");
+
+        return modelMapper.map(precoModels, new TypeToken<List<PrecoDto>>() {
+        }.getType());
+    }
+
+    public PrecoDto findById(PrecoModel precoModel) {
+
+        if (precoModel == null) {
+            throw new ParametroInvalidoException("A Preco Model deve informada");
 
         }
 
-        if (precoDto.getId() == null) {
-            throw new ParametroInvalidoException("O Model Preco deve conter um id");
+        if (precoModel.getId() == null) {
+            throw new ParametroInvalidoException("A Preco Model deve conter um id");
 
         }
 
         try {
-            precoDto = precoRepository.findById(precoDto.getId()).get();
+            precoModel = precoRepository.findById(precoModel.getId()).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return precoDto;
+
+        return modelMapper.map(precoModel, PrecoDto.class);
     }
 
-    public PrecoModel findById(Long id) {
+
+    public PrecoDto findById(Long id) {
 
         if (id == null) {
             throw new ParametroInvalidoException("Id informado inválido");
 
         }
 
-        PrecoModel precoDto = new PrecoModel();
+        PrecoModel precoModel = new PrecoModel();
         try {
-            precoDto = precoRepository.findById(id).get();
+            precoModel = precoRepository.findById(id).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return precoDto;
+        return modelMapper.map(precoModel, PrecoDto.class);
     }
 
-    public PrecoModel insert(PrecoModel precoDto) {
+    public PrecoDto insert(PrecoDto precoDto) {
         precoDto.setId(null);
 
-        PrecoModel result = precoRepository.save(precoDto);
+        PrecoDto result = new PrecoDto(precoRepository.save(new PrecoModel(precoDto)));
 
         return result;
     }
 
-    public PrecoModel update(PrecoModel precoDto) {
+    public PrecoModel update(PrecoModel precoModel) {
 
-        findById(precoDto);
-
-
-        return precoRepository.save(precoDto);
+        return precoRepository.save(precoModel);
     }
 
     public boolean delete(Long id) {
@@ -85,7 +95,24 @@ public class PrecoService {
 
         return true;
     }
+
+
+
+    public PrecoDto buscarPorId(Long id) {
+
+        Optional<PrecoModel> precoModel = precoRepository.buscaPorId(id);
+
+        if (precoModel.isPresent())
+        {
+            return new PrecoDto(precoModel.get());
+        }else {
+            throw new RecursoNaoEncontradoException("Id não encontrado");
+        }
+
+
+    }
 }
+
 
 
 

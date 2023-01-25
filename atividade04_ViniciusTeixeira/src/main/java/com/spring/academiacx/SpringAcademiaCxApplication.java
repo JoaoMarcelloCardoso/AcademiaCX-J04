@@ -10,7 +10,7 @@ public class SpringAcademiaCxApplication {
     public static void main(String[] args) {
         SpringApplication.run(SpringAcademiaCxApplication.class, args);
 
-        System.out.println(new BCryptPasswordEncoder().encode("senha123"));
+       // System.out.println(new BCryptPasswordEncoder().encode("senha123"));
     }
 
 

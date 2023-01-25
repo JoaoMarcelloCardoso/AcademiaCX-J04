@@ -1,7 +1,9 @@
 package com.spring.academiacx.model;
 
 
+import com.spring.academiacx.model.dto.ProdutoDto;
 import jakarta.persistence.*;
+
 
 @Entity
 @Table(name = "tb_produto")
@@ -14,6 +16,12 @@ public class ProdutoModel {
     private String nome;
 
     public ProdutoModel() {
+    }
+
+    public ProdutoModel(ProdutoDto produtoDto) {
+        this.id= produtoDto.getId();
+        this.sku= produtoDto.getSku();
+        this.nome= produtoDto.getNome();
     }
 
     public Long getId() {
@@ -39,4 +47,5 @@ public class ProdutoModel {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
 }

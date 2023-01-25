@@ -3,78 +3,88 @@ package com.spring.academiacx.service;
 import com.spring.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.spring.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.spring.academiacx.model.CarrinhoModel;
+import com.spring.academiacx.model.dto.CarrinhoDto;
 import com.spring.academiacx.repository.CarrinhoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class CarrinhoService {
 
-    @Autowired
-    private CarrinhoRepository carrinhoRepository;
+    private final CarrinhoRepository carrinhoRepository;
 
-    public List<CarrinhoModel> findAll() {
-        List<CarrinhoModel> carrinhoDtos = carrinhoRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return carrinhoDtos;
+    public CarrinhoService(CarrinhoRepository carrinhoRepository, ModelMapper modelMapper) {
+        this.carrinhoRepository = carrinhoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public CarrinhoModel findById(CarrinhoModel carrinhoDto) {
+    public List<CarrinhoDto> findAll() {
+        List<CarrinhoModel> carrinhoModels = carrinhoRepository.findAll();
 
-        if (carrinhoDto == null) {
-            throw new ParametroInvalidoException("O Model Carrinho deve informado");
+
+        return modelMapper.map(carrinhoModels, new TypeToken<List<CarrinhoDto>>() {
+        }.getType());
+    }
+
+    public CarrinhoDto findById(CarrinhoModel carrinhoModel) {
+
+        if (carrinhoModel == null) {
+            throw new ParametroInvalidoException("A Endereco Model deve informada");
 
         }
 
-        if (carrinhoDto.getId() == null) {
-            throw new ParametroInvalidoException("O Model Carrinho deve conter um id");
+        if (carrinhoModel.getId() == null) {
+            throw new ParametroInvalidoException("A Endereco Model deve conter um id");
 
         }
 
         try {
-            carrinhoDto = carrinhoRepository.findById(carrinhoDto.getId()).get();
+            carrinhoModel = carrinhoRepository.findById(carrinhoModel.getId()).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return carrinhoDto;
+
+        return modelMapper.map(carrinhoModel, CarrinhoDto.class);
     }
 
-    public CarrinhoModel findById(Long id) {
+
+    public CarrinhoDto findById(Long id) {
 
         if (id == null) {
             throw new ParametroInvalidoException("Id informado inválido");
 
         }
 
-        CarrinhoModel carrinhoDto = new CarrinhoModel();
+        CarrinhoModel carrinhoModel = new CarrinhoModel();
         try {
-            carrinhoDto = carrinhoRepository.findById(id).get();
+            carrinhoModel = carrinhoRepository.findById(id).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return carrinhoDto;
+        return modelMapper.map(carrinhoModel, CarrinhoDto.class);
     }
 
-    public CarrinhoModel insert(CarrinhoModel carrinhoDto) {
+    public CarrinhoDto insert(CarrinhoDto carrinhoDto) {
         carrinhoDto.setId(null);
 
-        CarrinhoModel result = carrinhoRepository.save(carrinhoDto);
+        CarrinhoDto result = new CarrinhoDto(carrinhoRepository.save(new CarrinhoModel(carrinhoDto)));
 
         return result;
     }
 
-    public CarrinhoModel update(CarrinhoModel carrinhoDto) {
+    public CarrinhoModel update(CarrinhoModel carrinhoModel) {
 
-        findById(carrinhoDto);
-
-
-        return carrinhoRepository.save(carrinhoDto);
+        return carrinhoRepository.save(carrinhoModel);
     }
 
     public boolean delete(Long id) {
@@ -85,4 +95,24 @@ public class CarrinhoService {
 
         return true;
     }
+
+
+
+    public CarrinhoDto buscarPorId(Long id) {
+
+        Optional<CarrinhoModel> carrinhoModel = carrinhoRepository.buscaPorId(id);
+
+        if (carrinhoModel.isPresent())
+        {
+            return new CarrinhoDto(carrinhoModel.get());
+        }else {
+            throw new RecursoNaoEncontradoException("Id não encontrado");
+        }
+
+
+    }
 }
+
+
+
+

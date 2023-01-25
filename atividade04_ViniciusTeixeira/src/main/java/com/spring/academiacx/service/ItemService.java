@@ -3,78 +3,88 @@ package com.spring.academiacx.service;
 import com.spring.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.spring.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.spring.academiacx.model.ItemModel;
+import com.spring.academiacx.model.dto.ItemDto;
 import com.spring.academiacx.repository.ItemRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ItemService {
 
-    @Autowired
-    private ItemRepository itemRepository;
+    private final ItemRepository itemRepository;
 
-    public List<ItemModel> findAll() {
-        List<ItemModel> itemDtos = itemRepository.findAll();
+    private final ModelMapper modelMapper;
 
-        return itemDtos;
+    public ItemService(ItemRepository itemRepository, ModelMapper modelMapper) {
+        this.itemRepository = itemRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public ItemModel findById(ItemModel itemDto) {
+    public List<ItemDto> findAll() {
+        List<ItemModel> itemModels = itemRepository.findAll();
 
-        if (itemDto == null) {
-            throw new ParametroInvalidoException("O Model Item deve informado");
+
+        return modelMapper.map(itemModels, new TypeToken<List<ItemDto>>() {
+        }.getType());
+    }
+
+    public ItemDto findById(ItemModel itemModel) {
+
+        if (itemModel == null) {
+            throw new ParametroInvalidoException("A Item Model deve informada");
 
         }
 
-        if (itemDto.getId() == null) {
-            throw new ParametroInvalidoException("O Model Item deve conter um id");
+        if (itemModel.getId() == null) {
+            throw new ParametroInvalidoException("A Item Model deve conter um id");
 
         }
 
         try {
-            itemDto = itemRepository.findById(itemDto.getId()).get();
+            itemModel = itemRepository.findById(itemModel.getId()).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return itemDto;
+
+        return modelMapper.map(itemModel, ItemDto.class);
     }
 
-    public ItemModel findById(Long id) {
+
+    public ItemDto findById(Long id) {
 
         if (id == null) {
             throw new ParametroInvalidoException("Id informado inválido");
 
         }
 
-        ItemModel itemDto = new ItemModel();
+        ItemModel itemModel = new ItemModel();
         try {
-            itemDto = itemRepository.findById(id).get();
+            itemModel = itemRepository.findById(id).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return itemDto;
+        return modelMapper.map(itemModel, ItemDto.class);
     }
 
-    public ItemModel insert(ItemModel itemDto) {
+    public ItemDto insert(ItemDto itemDto) {
         itemDto.setId(null);
 
-        ItemModel result = itemRepository.save(itemDto);
+        ItemDto result = new ItemDto(itemRepository.save(new ItemModel(itemDto)));
 
         return result;
     }
 
-    public ItemModel update(ItemModel itemDto) {
+    public ItemModel update(ItemModel itemModel) {
 
-        findById(itemDto);
-
-
-        return itemRepository.save(itemDto);
+        return itemRepository.save(itemModel);
     }
 
     public boolean delete(Long id) {
@@ -85,6 +95,24 @@ public class ItemService {
 
         return true;
     }
+
+
+
+    public ItemDto buscarPorId(Long id) {
+
+        Optional<ItemModel> itemModel = itemRepository.buscaPorId(id);
+
+        if (itemModel.isPresent())
+        {
+            return new ItemDto(itemModel.get());
+        }else {
+            throw new RecursoNaoEncontradoException("Id não encontrado");
+        }
+
+
+    }
 }
+
+
 
 

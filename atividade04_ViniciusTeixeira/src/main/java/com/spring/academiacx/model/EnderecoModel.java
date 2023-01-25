@@ -1,6 +1,8 @@
 package com.spring.academiacx.model;
 
 
+import com.spring.academiacx.model.dto.EnderecoDto;
+import com.spring.academiacx.model.dto.ItemDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -19,6 +21,16 @@ public class EnderecoModel {
     @ManyToOne
     @JoinColumn(name = "cliente_id")
     private UserModel userModel;
+
+    public EnderecoModel(EnderecoDto enderecoDto) {
+        this.id= enderecoDto.getId();
+        this.cep= enderecoDto.getCep();
+        this.numero = enderecoDto.getNumero();
+        this.bairro = enderecoDto.getBairro();
+        this.cidade = enderecoDto.getCidade();
+        this.uf = enderecoDto.getUf();
+        this.userModel = enderecoDto.getUserModel();
+    }
 
     public EnderecoModel() {
     }
@@ -71,11 +83,11 @@ public class EnderecoModel {
         this.uf = uf;
     }
 
-    public UserModel getClienteModel() {
+    public UserModel getUserModel() {
         return userModel;
     }
 
-    public void setClienteModel(UserModel userModel) {
+    public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
     }
 }

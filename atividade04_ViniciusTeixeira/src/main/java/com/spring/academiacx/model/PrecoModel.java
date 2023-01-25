@@ -1,6 +1,7 @@
 package com.spring.academiacx.model;
 
 
+import com.spring.academiacx.model.dto.PrecoDto;
 import jakarta.persistence.*;
 
 @Entity
@@ -14,11 +15,18 @@ public class PrecoModel {
 
     @ManyToOne
     @JoinColumn(name = "produto_id")
-    private ProdutoModel produtoDto;
+    private ProdutoModel produtoModel;
 
     @ManyToOne
-    @JoinColumn(name = "cliente_id")
+    @JoinColumn(name = "user_id")
     private UserModel userModel;
+
+    public PrecoModel(PrecoDto PrecoDto) {
+        this.id= PrecoDto.getId();
+        this.valor= PrecoDto.getValor();
+        this.produtoModel = PrecoDto.getProdutoModel();
+        this.userModel = PrecoDto.getUserModel();
+    }
 
     public PrecoModel() {
     }
@@ -40,18 +48,18 @@ public class PrecoModel {
     }
 
     public ProdutoModel getProdutoModel() {
-        return produtoDto;
+        return produtoModel;
     }
 
-    public void setProdutoModel(ProdutoModel produtoDto) {
-        this.produtoDto = produtoDto;
+    public void setProdutoModel(ProdutoModel produtoModel) {
+        this.produtoModel = produtoModel;
     }
 
-    public UserModel getClienteModel() {
+    public UserModel getUserModel() {
         return userModel;
     }
 
-    public void setClienteModel(UserModel userModel) {
+    public void setUserModel(UserModel userModel) {
         this.userModel = userModel;
     }
 }

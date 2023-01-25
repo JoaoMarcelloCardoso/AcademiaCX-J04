@@ -2,16 +2,15 @@ package com.spring.academiacx.service;
 
 import com.spring.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.spring.academiacx.handler.exceptions.RecursoNaoEncontradoException;
-import com.spring.academiacx.model.ProdutoModel;
 import com.spring.academiacx.model.UserModel;
 import com.spring.academiacx.model.dto.UserDto;
-import com.spring.academiacx.repository.ProdutoRepository;
 import com.spring.academiacx.repository.UserRepository;
 import org.modelmapper.ModelMapper;
 import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 
 @Service
@@ -19,70 +18,74 @@ public class UserService {
 
     private final UserRepository userRepository;
 
-    public UserService(UserRepository userRepository) {
+    private final ModelMapper modelMapper;
+
+    public UserService(UserRepository userRepository, ModelMapper modelMapper) {
         this.userRepository = userRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<UserModel> findAll() {
-        List<UserModel> userDtos = userRepository.findAll();
+    public List<UserDto> findAll() {
+        List<UserModel> userModels = userRepository.findAll();
 
-        return userDtos;
+
+        return modelMapper.map(userModels, new TypeToken<List<UserDto>>() {
+        }.getType());
     }
 
-    public UserModel findById(UserModel userDto) {
+    public UserDto findById(UserModel userModel) {
 
-        if (userDto == null) {
-            throw new ParametroInvalidoException("O Model Produto deve informado");
+        if (userModel == null) {
+            throw new ParametroInvalidoException("A User Model deve informada");
 
         }
 
-        if (userDto.getId() == null) {
-            throw new ParametroInvalidoException("O Model Produto deve conter um id");
+        if (userModel.getId() == null) {
+            throw new ParametroInvalidoException("A User Model deve conter um id");
 
         }
 
         try {
-            userDto = userRepository.findById(userDto.getId()).get();
+            userModel = userRepository.findById(userModel.getId()).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return userDto;
+
+        return modelMapper.map(userModel, UserDto.class);
     }
 
-    public UserModel findById(Long id) {
+
+    public UserDto findById(Long id) {
 
         if (id == null) {
             throw new ParametroInvalidoException("Id informado inválido");
 
         }
 
-        UserModel userDto = new UserModel();
+        UserModel userModel = new UserModel();
         try {
-            userDto = userRepository.findById(id).get();
+            userModel = userRepository.findById(id).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return userDto;
+        return modelMapper.map(userModel, UserDto.class);
     }
 
-    public UserModel insert(UserModel userDto) {
+    public UserDto insert(UserDto userDto) {
         userDto.setId(null);
 
-        UserModel result = userRepository.save(userDto);
+        UserDto result = new UserDto(userRepository.save(new UserModel(userDto)));
 
         return result;
     }
 
-    public UserModel update(UserModel userDto) {
+    public UserModel update(UserModel userModel) {
 
-        findById(userDto);
-
-
-        return userRepository.save(userDto);
+        return userRepository.save(userModel);
     }
 
     public boolean delete(Long id) {
@@ -93,8 +96,20 @@ public class UserService {
 
         return true;
     }
+
+
+
+    public UserDto buscarPorId(Long id) {
+
+        Optional<UserModel> userModel = userRepository.buscaPorId(id);
+
+        if (userModel.isPresent())
+        {
+            return new UserDto(userModel.get());
+        }else {
+            throw new RecursoNaoEncontradoException("Id não encontrado");
+        }
+
+
+    }
 }
-
-
-
-

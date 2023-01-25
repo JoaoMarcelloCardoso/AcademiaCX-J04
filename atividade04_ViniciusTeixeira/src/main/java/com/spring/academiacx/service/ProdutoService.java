@@ -3,81 +3,88 @@ package com.spring.academiacx.service;
 import com.spring.academiacx.handler.exceptions.ParametroInvalidoException;
 import com.spring.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.spring.academiacx.model.ProdutoModel;
+import com.spring.academiacx.model.dto.ProdutoDto;
 import com.spring.academiacx.repository.ProdutoRepository;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.modelmapper.ModelMapper;
+import org.modelmapper.TypeToken;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
+import java.util.Optional;
 
 @Service
 public class ProdutoService {
 
     private final ProdutoRepository produtoRepository;
 
-    public ProdutoService(ProdutoRepository produtoRepository) {
+    private final ModelMapper modelMapper;
+
+    public ProdutoService(ProdutoRepository produtoRepository, ModelMapper modelMapper) {
         this.produtoRepository = produtoRepository;
+        this.modelMapper = modelMapper;
     }
 
-    public List<ProdutoModel> findAll() {
-        List<ProdutoModel> produtoDtos = produtoRepository.findAll();
+    public List<ProdutoDto> findAll() {
+        List<ProdutoModel> produtoModels = produtoRepository.findAll();
 
-        return produtoDtos;
+
+        return modelMapper.map(produtoModels, new TypeToken<List<ProdutoDto>>() {
+        }.getType());
     }
 
-    public ProdutoModel findById(ProdutoModel produtoDto) {
+    public ProdutoDto findById(ProdutoModel produtoModel) {
 
-        if (produtoDto == null) {
-            throw new ParametroInvalidoException("O Model Produto deve informado");
+        if (produtoModel == null) {
+            throw new ParametroInvalidoException("A Produto Model deve informada");
 
         }
 
-        if (produtoDto.getId() == null) {
-            throw new ParametroInvalidoException("O Model Produto deve conter um id");
+        if (produtoModel.getId() == null) {
+            throw new ParametroInvalidoException("A Produto Model deve conter um id");
 
         }
 
         try {
-            produtoDto = produtoRepository.findById(produtoDto.getId()).get();
+            produtoModel = produtoRepository.findById(produtoModel.getId()).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return produtoDto;
+
+        return modelMapper.map(produtoModel, ProdutoDto.class);
     }
 
-    public ProdutoModel findById(Long id) {
+
+    public ProdutoDto findById(Long id) {
 
         if (id == null) {
             throw new ParametroInvalidoException("Id informado inválido");
 
         }
 
-        ProdutoModel produtoDto = new ProdutoModel();
+        ProdutoModel produtoModel = new ProdutoModel();
         try {
-            produtoDto = produtoRepository.findById(id).get();
+            produtoModel = produtoRepository.findById(id).get();
 
         } catch (Exception e) {
             throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
-        return produtoDto;
+        return modelMapper.map(produtoModel, ProdutoDto.class);
     }
 
-    public ProdutoModel insert(ProdutoModel produtoDto) {
+    public ProdutoDto insert(ProdutoDto produtoDto) {
         produtoDto.setId(null);
 
-        ProdutoModel result = produtoRepository.save(produtoDto);
+        ProdutoDto result = new ProdutoDto(produtoRepository.save(new ProdutoModel(produtoDto)));
 
         return result;
     }
 
-    public ProdutoModel update(ProdutoModel produtoDto) {
+    public ProdutoModel update(ProdutoModel produtoModel) {
 
-        findById(produtoDto);
-
-
-        return produtoRepository.save(produtoDto);
+        return produtoRepository.save(produtoModel);
     }
 
     public boolean delete(Long id) {
@@ -88,8 +95,21 @@ public class ProdutoService {
 
         return true;
     }
+
+
+
+    public ProdutoDto buscarPorId(Long id) {
+
+        Optional<ProdutoModel> produtoModel = produtoRepository.buscaPorId(id);
+
+        if (produtoModel.isPresent())
+        {
+            return new ProdutoDto(produtoModel.get());
+        }else {
+            throw new RecursoNaoEncontradoException("Id não encontrado");
+        }
+
+
+    }
 }
-
-
-
 

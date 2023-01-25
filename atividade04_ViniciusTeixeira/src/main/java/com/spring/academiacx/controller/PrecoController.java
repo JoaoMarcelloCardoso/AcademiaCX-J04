@@ -1,8 +1,8 @@
 package com.spring.academiacx.controller;
 
 import com.spring.academiacx.model.PrecoModel;
+import com.spring.academiacx.model.dto.PrecoDto;
 import com.spring.academiacx.service.PrecoService;
-import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,34 +12,36 @@ import java.util.List;
 @RequestMapping(value = "/preco")
 public class PrecoController {
 
-    @Autowired
-    private PrecoService precoService;
+    private final PrecoService precoService;
+
+    public PrecoController(PrecoService precoService) {
+        this.precoService = precoService;
+    }
 
     @GetMapping
     public ResponseEntity<?> findAll() {
 
-        List<PrecoModel> response = precoService.findAll();
+        List<PrecoDto> response = precoService.findAll();
 
         return response == null ? ResponseEntity.unprocessableEntity().build() : ResponseEntity.ok(response);
     }
 
     @GetMapping("/{id}")
-    public PrecoModel findById(@PathVariable Long id) {
+    public PrecoDto findById(@PathVariable Long id) {
 
         return precoService.findById(id);
     }
-
-    @PostMapping("/save")
-    public PrecoModel insert(@RequestBody PrecoModel precoDto) {
+    @PostMapping("/salvar")
+    public PrecoDto insert(@RequestBody PrecoDto precoDto) {
 
         return precoService.insert(precoDto);
     }
 
 
     @PutMapping("/update")
-    public PrecoModel update(@RequestBody PrecoModel precoDto) {
+    public PrecoModel update(@RequestBody PrecoModel precoModel) {
 
-        return precoService.update(precoDto);
+        return precoService.update(precoModel);
     }
 
     @DeleteMapping("/delete")
@@ -48,10 +50,16 @@ public class PrecoController {
         return precoService.delete(id);
     }
 
+    @GetMapping("/buscar-id")
+    public PrecoDto filter(@RequestParam(value = "id", required = true) Long id) {
+
+        return precoService.buscarPorId(id);
+    }
+
+
+
 
 }
-
-
 
 
 
