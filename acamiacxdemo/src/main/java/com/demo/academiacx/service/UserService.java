@@ -1,7 +1,7 @@
 package com.demo.academiacx.service;
 
 import com.demo.academiacx.handler.exceptions.ParametroInvalidoException;
-import com.demo.academiacx.handler.exceptions.RecursoNaoEncontradoExeception;
+import com.demo.academiacx.handler.exceptions.RecursoNaoEncontradoException;
 import com.demo.academiacx.model.UserModel;
 import com.demo.academiacx.model.dto.UserDto;
 import com.demo.academiacx.repository.UserRepository;
@@ -48,7 +48,7 @@ public class UserService {
             userModel = userRepository.findById(userModel.getId()).get();
 
         } catch (Exception e) {
-            throw new RecursoNaoEncontradoExeception("Id informado não encontrado");
+            throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
 
@@ -68,7 +68,7 @@ public class UserService {
             userModel = userRepository.findById(id).get();
 
         } catch (Exception e) {
-            throw new RecursoNaoEncontradoExeception("Id informado não encontrado");
+            throw new RecursoNaoEncontradoException("Id informado não encontrado");
         }
 
         return modelMapper.map(userModel, UserDto.class);
@@ -104,11 +104,9 @@ public class UserService {
         Optional<List<UserModel>> listUserModel = userRepository.findByNameOrEmail(name, email);
 
         if (listUserModel.isPresent()) {
-
-
             return listUserModel.stream().findFirst().get().get(0);
         } else {
-            throw new RecursoNaoEncontradoExeception("Usuário não encontrado");
+            throw new RecursoNaoEncontradoException("Usuário não encontrado");
         }
 
     }
@@ -121,7 +119,7 @@ public class UserService {
         {
             return new UserDto(userModel.get());
         }else {
-            throw new RecursoNaoEncontradoExeception("Id não encontrado");
+            throw new RecursoNaoEncontradoException("Id não encontrado");
         }
 
 

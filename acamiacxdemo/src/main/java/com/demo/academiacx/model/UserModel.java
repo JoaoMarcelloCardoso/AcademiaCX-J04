@@ -23,10 +23,6 @@ public class UserModel implements UserDetails {
     @Column(nullable = true)
     private Boolean flCliente;
 
-    @ManyToOne
-    @JoinColumn(name = "department_id")
-    private DepartmentModel departmentModel;
-
     //Login
     @Column(nullable = true, unique = true)
     private String username;
@@ -39,7 +35,6 @@ public class UserModel implements UserDetails {
 
     public UserModel(UserDto userDto) {
         this.id= userDto.getId();
-        this.departmentModel= userDto.getDepartmentModel();
         this.email = userDto.getEmail();
 //        this.name = userDto.getName();
     }
@@ -67,15 +62,6 @@ public class UserModel implements UserDetails {
     public void setEmail(String email) {
         this.email = email;
     }
-
-    public DepartmentModel getDepartmentModel() {
-        return departmentModel;
-    }
-
-    public void setDepartmentModel(DepartmentModel departmentModel) {
-        this.departmentModel = departmentModel;
-    }
-
 
     public void setUsername(String username) {
         this.username = username;
