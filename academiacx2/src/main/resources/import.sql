@@ -1,7 +1,7 @@
-INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (1,'45476745410','João','joao','$2a$10$S5mFtPqviPJmjgab0Bf4ve82.TjMcmV6OrTjMSVkyFVKjKiiBX7z2');
-INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (2,'47434907811','Laura','laura','$2a$10$S5mFtPqviPJmjgab0Bf4ve82.TjMcmV6OrTjMSVkyFVKjKiiBX7z2');
-INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (3,'31012906701','Claudio','claudio','$2a$10$S5mFtPqviPJmjgab0Bf4ve82.TjMcmV6OrTjMSVkyFVKjKiiBX7z2');
-INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (4,'31354311155','Julia','julia','$2a$10$S5mFtPqviPJmjgab0Bf4ve82.TjMcmV6OrTjMSVkyFVKjKiiBX7z2');
+INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (1,'45476745410','João','joao','$2a$10$USw7xTDZDmCbgGY6MRoEiejqXl0HnfEZ56ndgEtf4PeafQ9i2mSrC');
+INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (2,'47434907811','Laura','laura','$2a$10$USw7xTDZDmCbgGY6MRoEiejqXl0HnfEZ56ndgEtf4PeafQ9i2mSrC');
+INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (3,'31012906701','Claudio','claudio','$2a$10$USw7xTDZDmCbgGY6MRoEiejqXl0HnfEZ56ndgEtf4PeafQ9i2mSrC');
+INSERT INTO tb_cliente (id,cpf,nome,username,password) VALUES (4,'31354311155','Julia','julia','$2a$10$USw7xTDZDmCbgGY6MRoEiejqXl0HnfEZ56ndgEtf4PeafQ9i2mSrC');
 
 INSERT INTO tb_produto (id,sku,nome) VALUES (1,'112-414-31','Ração Para Gato');
 INSERT INTO tb_produto (id,sku,nome) VALUES (2,'532-603-17','Caneca');

@@ -12,7 +12,7 @@ public class Academiacx2Application {
 		SpringApplication.run(Academiacx2Application.class, args);
 
 		//Linha para dar um encode em uma senha
-		//System.out.println(new BCryptPasswordEncoder().encode("senha"));
+		System.out.println(new BCryptPasswordEncoder().encode("senha123"));
 	}
 
 }

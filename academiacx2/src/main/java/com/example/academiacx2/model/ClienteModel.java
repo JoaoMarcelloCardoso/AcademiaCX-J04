@@ -17,9 +17,9 @@ public class ClienteModel implements UserDetails {
     private String cpf;
     private String nome;
 
-    @Column(nullable = true, unique = true)
+    @Column(nullable = false, unique = true)
     private String username;
-    @Column(nullable = true)
+    @Column(nullable = false)
     private String password;
 
     public ClienteModel() {
@@ -55,38 +55,46 @@ public class ClienteModel implements UserDetails {
         this.nome = nome;
     }
 
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public void setPassword(String password) {
+        this.password = password;
+    }
+
     @Override
     public String getUsername() {
         return this.username;
     }
 
     @Override
+    public String getPassword() {
+        return this.password;
+    }
+
+    @Override
     public boolean isAccountNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isAccountNonLocked() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isCredentialsNonExpired() {
-        return false;
+        return true;
     }
 
     @Override
     public boolean isEnabled() {
-        return false;
+        return true;
     }
-
     @Override
     public Collection<? extends GrantedAuthority> getAuthorities() {
         return null;
-    }
-    @Override
-    public String getPassword() {
-        return this.password;
     }
 }
 
